@@ -1,0 +1,7 @@
+[project]
+name = "vectree"
+version = "0.1.0"
+description = "Мультимодальная база знаний с Graph-RAG (учебный проект до Senior Python Backend / AI Engineer)"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = []
