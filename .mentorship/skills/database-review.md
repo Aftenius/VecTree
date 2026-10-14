@@ -1,5 +1,7 @@
 # Skill: Database & Migrations Review
 
+> Вывод короткий: только то, что влияет на решение.
+
 Проверка схемы PostgreSQL, SQLAlchemy, миграций Alembic, производительности запросов.
 
 ## Что проверяю

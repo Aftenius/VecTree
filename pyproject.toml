@@ -5,3 +5,16 @@ description = "Мультимодальная база знаний с Graph-RAG
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = []
+
+[dependency-groups]
+dev = [
+    "mypy>=2.4.0",
+    "pre-commit>=4.7.0",
+    "ruff>=0.17.0",
+]
+
+[tool.mypy]
+strict = true
+
+[tool.ruff]
+line-length = 100
