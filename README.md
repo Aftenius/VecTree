@@ -14,38 +14,77 @@ Neo4j/NetworkX, Docker, GitHub Actions, OpenTelemetry, Prometheus, Grafana, Raga
 
 ## Этапы и задачи
 
-### Этап 0. Фундамент проекта
+### Этап 0. Каркас и инструменты
 
-Рабочий каркас проекта.
-
-- [ ] Инициализация проекта: `pyproject.toml` (uv/poetry), зависимости по группам (dev/prod), Python 3.14+.
+- [ ] Инициализация проекта: `pyproject.toml` (uv), группы зависимостей (dev/test), Python 3.14+.
 - [ ] Структура каталогов: Clean Architecture (domain / application / infrastructure / presentation).
-- [ ] Конфигурация: Pydantic Settings, `.env`, разделение профилей (dev/test/prod).
 - [ ] Инструменты качества: Ruff (lint + format), mypy `--strict`, pre-commit hooks.
 - [ ] Логирование: structlog / stdlib JSON-логи, correlation/request-id.
-- [ ] Docker: multi-stage Dockerfile, docker-compose (Postgres, Redis, MinIO).
-- [ ] CI-скелет: GitHub Actions — lint + type-check + unit-тесты на каждый PR.
-- [ ] Инициализация Alembic, первая пустая миграция.
-- [ ] DI-контейнер (Dishka): провайдеры для настроек, БД-сессии, репозиториев.
+- [ ] Базовый pytest: конфигурация, первый smoke-тест.
+
+### Этап 1. Домен на чистом Python (ООП + SOLID/DRY/KISS)
+
+- [ ] Сущности и value objects: Workspace, Folder, Document, Tag, внешние ссылки.
+- [ ] Агрегаты, инварианты домена; доменные исключения и типы ошибок.
+- [ ] Порты (Protocol/ABC): репозитории и сервисы без привязки к инфраструктуре.
+- [ ] Иерархия папок: Materialized Path как чистая логика (без SQL).
+- [ ] Доменные сервисы: перемещение поддерева, теги, права.
+- [ ] In-memory реализации репозиториев (dict).
+- [ ] Unit-тесты домена (pytest): инварианты и краевые случаи.
+
+### Этап 2. Асинхронность на чистом Python
+
+- [ ] Основы asyncio: event loop, корутины, `asyncio.gather` / `TaskGroup`.
+- [ ] Отмена задач, таймауты (`asyncio.timeout`), обработка исключений.
+- [ ] Асинхронные контекст-менеджеры и async-итераторы.
+- [ ] Перевод портов и репозиториев на async.
+- [ ] CPU-bound операции через `run_in_executor` / process pool.
+- [ ] Async-тесты (pytest-asyncio), корректный loop scope.
+
+### Этап 3. Локальный стек в Docker + конфигурация
+
+- [ ] docker-compose: PostgreSQL (+pgvector), Redis, MinIO.
+- [ ] Multi-stage Dockerfile для приложения.
+- [ ] Healthchecks (liveness/readiness) для сервисов.
+- [ ] Конфигурация: Pydantic Settings, `.env`, профили dev/test/prod.
+
+### Этап 4. Персистентность: PostgreSQL + SQLAlchemy 2.0 + Alembic
+
+- [ ] SQLAlchemy 2.0 (asyncpg): модели, отношения.
+- [ ] Alembic: инициализация, обратимые миграции.
+- [ ] Репозитории поверх Unit of Work; без lazy-load вне сессии, без N+1.
+- [ ] Иерархия папок в БД: `ltree`/Materialized Path, рекурсивные CTE (дерево, поддерево, перемещение).
+- [ ] Индексы под реальные запросы; пул соединений и таймауты.
+- [ ] Интеграционные тесты на testcontainers (Postgres).
+
+### Этап 5. HTTP-слой: FastAPI
+
+- [ ] FastAPI: маршруты, Pydantic v2 схемы.
+- [ ] DI-контейнер (Dishka): настройки, сессии БД, репозитории.
 - [ ] Middleware: request-id, обработка исключений, единый формат ошибок (RFC 7807).
+- [ ] CRUD-эндпоинты документов/папок/тегов: пагинация, фильтры, сортировки.
+- [ ] API-тесты (httpx/ASGI).
 
-### Этап 1. Базовый CRUD, файлы и аутентификация
+### Этап 6. Аутентификация и авторизация
 
-Пользователь управляет иерархией знаний и загружает файлы.
+- [ ] JWT: access/refresh, ротация refresh-токенов.
+- [ ] Argon2-хеширование паролей.
+- [ ] RBAC (owner/editor/viewer) на уровне workspace; проверка на каждом доступе.
+- [ ] Тесты auth/RBAC.
 
-- [ ] Модель предметной области: Workspace → Folder → Document → Tag ↔ Document, внешние ссылки.
-- [ ] Иерархия папок: Materialized Path / `ltree`; рекурсивные запросы (CTE) — дерево, поддерево, перемещение.
-- [ ] SQLAlchemy 2.0 (asyncpg): модели, отношения, репозитории поверх Unit of Work.
-- [ ] CRUD-эндпоинты документов/папок/тегов: Pydantic-схемы, пагинация, фильтры, сортировки.
-- [ ] Работа с файлами: MinIO, presigned URL на загрузку/скачивание минуя backend.
-- [ ] Валидация файлов: MIME-типы, ограничение размера, безопасные метаданные, checksum (SHA-256).
-- [ ] Аутентификация: JWT (access/refresh), ротация refresh-токенов, Argon2-хеширование паролей.
-- [ ] Авторизация: RBAC (owner/editor/viewer) на уровне workspace.
-- [ ] Unit- и API-тесты: pytest-asyncio, фикстуры, factory-boy, покрытие ключевых сценариев.
+### Этап 7. Файлы: MinIO/S3
 
-### Этап 2. Асинхронный пайплайн и гибридный RAG
+- [ ] MinIO, presigned URL на загрузку/скачивание минуя backend.
+- [ ] Валидация файлов: MIME-типы, ограничение размера, безопасные метаданные.
+- [ ] Checksum (SHA-256).
 
-Документы автоматически конвертируются в чанки и находятся через поиск.
+### Этап 8. CI
+
+- [ ] GitHub Actions: lint + type-check + unit-тесты на каждый PR.
+- [ ] Прогон миграций и интеграционных тестов (testcontainers: Postgres, Redis, MinIO).
+- [ ] Кэш зависимостей, артефакты логов.
+
+### Этап 9. Асинхронный пайплайн обработки документов
 
 - [ ] Брокер: RabbitMQ / Redis Streams; выбор воркера (Taskiq/Celery/ARQ), обоснование.
 - [ ] Transactional Outbox: гарантия доставки задач при коммите транзакции в БД.
@@ -53,6 +92,9 @@ Neo4j/NetworkX, Docker, GitHub Actions, OpenTelemetry, Prometheus, Grafana, Raga
 - [ ] Идемпотентность воркеров: idempotency-ключи, повторная обработка без дублей.
 - [ ] Стратегии чанкинга: наивный (токены) vs семантический (заголовки/абзацы) vs Parent-Document.
 - [ ] Эмбеддинги: provider-абстракция, батчинг, локальная модель vs внешний API.
+
+### Этап 10. Гибридный поиск и RAG
+
 - [ ] pgvector: схема, индексы HNSW/IVFFlat, метрика расстояния, tuning (m, ef_construction).
 - [ ] Полнотекстовый поиск PostgreSQL: `tsvector`, GIN-индекс, BM25-подобный ранкинг.
 - [ ] Гибридный поиск: объединение BM25 + dense через Reciprocal Rank Fusion (RRF).
@@ -60,9 +102,7 @@ Neo4j/NetworkX, Docker, GitHub Actions, OpenTelemetry, Prometheus, Grafana, Raga
 - [ ] Streaming-ответ: Server-Sent Events (SSE) для токенов LLM.
 - [ ] API-эндпоинт `/ask`: retrieval → сборка промпта → генерация → стриминг.
 
-### Этап 3. Graph-RAG и семантическое дерево
-
-Документы связаны не только папками, но и смысловыми узлами.
+### Этап 11. Graph-RAG и семантическое дерево
 
 - [ ] NER + извлечение триплетов (subject–predicate–object) из документов.
 - [ ] Схема графа: узлы (сущности/документы), рёбра (отношения), provenance (источник-документ).
@@ -74,9 +114,7 @@ Neo4j/NetworkX, Docker, GitHub Actions, OpenTelemetry, Prometheus, Grafana, Raga
 - [ ] API: эндпоинты навигации по графу (соседи узла, путь, подграф).
 - [ ] Тесты графовых запросов на testcontainers (Neo4j).
 
-### Этап 4. Надёжность, масштаб, наблюдаемость
-
-Система ведёт себя предсказуемо под нагрузкой и сбоями.
+### Этап 12. Надёжность, масштаб, наблюдаемость
 
 - [ ] RBAC в векторном поиске: pre-filtering прав доступа на уровне SQL/индекса (нельзя найти чужое).
 - [ ] Consistency разнородных хранилищ: distributed cleanup (Postgres ↔ MinIO ↔ pgvector ↔ graph).
@@ -91,7 +129,6 @@ Neo4j/NetworkX, Docker, GitHub Actions, OpenTelemetry, Prometheus, Grafana, Raga
 - [ ] Нагрузочное тестирование (locust/k6): профилирование узких мест, бюджет задержек.
 - [ ] Миграции без даунтайма (expand/contract), zero-downtime деплой.
 - [ ] Production-образы: distroless/alpine, non-root, healthchecks (liveness/readiness).
-- [ ] CI/CD: полный стенд в GitHub Actions (testcontainers: Postgres, Redis, MinIO, Neo4j) + деплой.
 
 ---
 
@@ -101,11 +138,19 @@ Neo4j/NetworkX, Docker, GitHub Actions, OpenTelemetry, Prometheus, Grafana, Raga
 
 | Этап | Статус |
 |---|---|
-| 0. Фундамент проекта | `[ ]` |
-| 1. Базовый CRUD, файлы и аутентификация | `[ ]` |
-| 2. Асинхронный пайплайн и гибридный RAG | `[ ]` |
-| 3. Graph-RAG и семантическое дерево | `[ ]` |
-| 4. Надёжность, масштаб, наблюдаемость | `[ ]` |
+| 0. Каркас и инструменты | `[ ]` |
+| 1. Домен на чистом Python | `[ ]` |
+| 2. Асинхронность на чистом Python | `[ ]` |
+| 3. Локальный стек в Docker + конфигурация | `[ ]` |
+| 4. Персистентность (PostgreSQL + SQLAlchemy + Alembic) | `[ ]` |
+| 5. HTTP-слой (FastAPI) | `[ ]` |
+| 6. Аутентификация и авторизация | `[ ]` |
+| 7. Файлы (MinIO/S3) | `[ ]` |
+| 8. CI | `[ ]` |
+| 9. Асинхронный пайплайн | `[ ]` |
+| 10. Гибридный поиск и RAG | `[ ]` |
+| 11. Graph-RAG и семантическое дерево | `[ ]` |
+| 12. Надёжность, масштаб, наблюдаемость | `[ ]` |
 
 ## Что сделано
 
