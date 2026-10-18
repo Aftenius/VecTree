@@ -16,23 +16,35 @@ Neo4j/NetworkX, Docker, GitHub Actions, OpenTelemetry, Prometheus, Grafana, Raga
 
 ### Этап 0. Каркас и инструменты
 
-- [ ] Инициализация проекта: `pyproject.toml` (uv), группы зависимостей (dev/test), Python 3.14+.
-- [ ] Структура каталогов: Clean Architecture (domain / application / infrastructure / presentation).
-- [ ] Инструменты качества: Ruff (lint + format), mypy `--strict`, pre-commit hooks.
-- [ ] Логирование: structlog / stdlib JSON-логи, correlation/request-id.
-- [ ] Базовый pytest: конфигурация, первый smoke-тест.
+- [x] Инициализация проекта: `pyproject.toml` (uv), группа зависимостей dev, Python 3.14+.
+- [x] Структура каталогов: Clean Architecture (domain / application / infrastructure / presentation).
+- [x] Инструменты качества: Ruff (lint + format), mypy `--strict`, pre-commit hooks.
 
-### Этап 1. Домен на чистом Python (ООП + SOLID/DRY/KISS)
+### Этап 1. ООП и проектирование домена (SOLID, DRY, KISS)
 
-- [ ] Сущности и value objects: Workspace, Folder, Document, Tag, внешние ссылки.
-- [ ] Агрегаты, инварианты домена; доменные исключения и типы ошибок.
-- [ ] Порты (Protocol/ABC): репозитории и сервисы без привязки к инфраструктуре.
+- [ ] Классы и объекты: атрибуты, методы, `self`, конструктор `__init__`.
+- [ ] Инкапсуляция: скрытое внутреннее состояние и публичный API класса.
+- [ ] Композиция vs наследование: что и когда выбирать.
+- [ ] Value object vs сущность: идентичность и равенство (`__eq__`, `__hash__`, `@dataclass`).
+- [ ] Абстракции и полиморфизм: `abc` / `Protocol`, duck typing.
+- [ ] SOLID: SRP, OCP, LSP, ISP, DIP — на примерах домена.
+- [ ] DRY и KISS: как не дублировать и не усложнять.
+- [ ] Сущности домена: Workspace, Folder, Document, Tag, внешние ссылки.
+- [ ] Агрегаты и инварианты домена.
+- [ ] Порты (Protocol/ABC): интерфейсы репозиториев без инфраструктуры.
 - [ ] Иерархия папок: Materialized Path как чистая логика (без SQL).
 - [ ] Доменные сервисы: перемещение поддерева, теги, права.
-- [ ] In-memory реализации репозиториев (dict).
-- [ ] Unit-тесты домена (pytest): инварианты и краевые случаи.
+- [ ] In-memory репозитории (dict).
 
-### Этап 2. Асинхронность на чистом Python
+### Этап 2. Тестирование (pytest)
+
+- [ ] Настройка pytest: конфигурация, каталог `tests/`.
+- [ ] Первый unit-тест домена.
+- [ ] Фикстуры и параметризация.
+- [ ] Инварианты и краевые случаи (`pytest.raises`).
+- [ ] Покрытие (coverage) ключевых сценариев.
+
+### Этап 3. Асинхронность на чистом Python
 
 - [ ] Основы asyncio: event loop, корутины, `asyncio.gather` / `TaskGroup`.
 - [ ] Отмена задач, таймауты (`asyncio.timeout`), обработка исключений.
@@ -41,14 +53,14 @@ Neo4j/NetworkX, Docker, GitHub Actions, OpenTelemetry, Prometheus, Grafana, Raga
 - [ ] CPU-bound операции через `run_in_executor` / process pool.
 - [ ] Async-тесты (pytest-asyncio), корректный loop scope.
 
-### Этап 3. Локальный стек в Docker + конфигурация
+### Этап 4. Локальный стек в Docker + конфигурация
 
 - [ ] docker-compose: PostgreSQL (+pgvector), Redis, MinIO.
 - [ ] Multi-stage Dockerfile для приложения.
 - [ ] Healthchecks (liveness/readiness) для сервисов.
 - [ ] Конфигурация: Pydantic Settings, `.env`, профили dev/test/prod.
 
-### Этап 4. Персистентность: PostgreSQL + SQLAlchemy 2.0 + Alembic
+### Этап 5. Персистентность: PostgreSQL + SQLAlchemy 2.0 + Alembic
 
 - [ ] SQLAlchemy 2.0 (asyncpg): модели, отношения.
 - [ ] Alembic: инициализация, обратимые миграции.
@@ -57,52 +69,53 @@ Neo4j/NetworkX, Docker, GitHub Actions, OpenTelemetry, Prometheus, Grafana, Raga
 - [ ] Индексы под реальные запросы; пул соединений и таймауты.
 - [ ] Интеграционные тесты на testcontainers (Postgres).
 
-### Этап 5. HTTP-слой: FastAPI
+### Этап 6. HTTP-слой: FastAPI
 
 - [ ] FastAPI: маршруты, Pydantic v2 схемы.
 - [ ] DI-контейнер (Dishka): настройки, сессии БД, репозитории.
+- [ ] Логирование: structlog / stdlib JSON-логи, correlation/request-id.
 - [ ] Middleware: request-id, обработка исключений, единый формат ошибок (RFC 7807).
 - [ ] CRUD-эндпоинты документов/папок/тегов: пагинация, фильтры, сортировки.
 - [ ] API-тесты (httpx/ASGI).
 
-### Этап 6. Аутентификация и авторизация
+### Этап 7. Аутентификация и авторизация
 
 - [ ] JWT: access/refresh, ротация refresh-токенов.
 - [ ] Argon2-хеширование паролей.
 - [ ] RBAC (owner/editor/viewer) на уровне workspace; проверка на каждом доступе.
 - [ ] Тесты auth/RBAC.
 
-### Этап 7. Файлы: MinIO/S3
+### Этап 8. Файлы: MinIO/S3
 
 - [ ] MinIO, presigned URL на загрузку/скачивание минуя backend.
 - [ ] Валидация файлов: MIME-типы, ограничение размера, безопасные метаданные.
 - [ ] Checksum (SHA-256).
 
-### Этап 8. CI
+### Этап 9. CI
 
 - [ ] GitHub Actions: lint + type-check + unit-тесты на каждый PR.
 - [ ] Прогон миграций и интеграционных тестов (testcontainers: Postgres, Redis, MinIO).
 - [ ] Кэш зависимостей, артефакты логов.
 
-### Этап 9. Асинхронный пайплайн обработки документов
+### Этап 10. Асинхронный пайплайн обработки документов
 
 - [ ] Брокер: RabbitMQ / Redis Streams; выбор воркера (Taskiq/Celery/ARQ), обоснование.
 - [ ] Transactional Outbox: гарантия доставки задач при коммите транзакции в БД.
 - [ ] Пайплайн парсинга: PDF, DOCX, Markdown, Web Scraping; retries, exponential backoff, DLX/DLQ.
 - [ ] Идемпотентность воркеров: idempotency-ключи, повторная обработка без дублей.
-- [ ] Стратегии чанкинга: наивный (токены) vs семантический (заголовки/абзацы) vs Parent-Document.
+- [ ] Стратегии чанкинга: токены vs семантический (заголовки/абзацы) vs Parent-Document; свой `RecursiveSplitter` без готовых обёрток.
 - [ ] Эмбеддинги: provider-абстракция, батчинг, локальная модель vs внешний API.
 
-### Этап 10. Гибридный поиск и RAG
+### Этап 11. Гибридный поиск и RAG
 
 - [ ] pgvector: схема, индексы HNSW/IVFFlat, метрика расстояния, tuning (m, ef_construction).
 - [ ] Полнотекстовый поиск PostgreSQL: `tsvector`, GIN-индекс, BM25-подобный ранкинг.
 - [ ] Гибридный поиск: объединение BM25 + dense через Reciprocal Rank Fusion (RRF).
-- [ ] Реранкинг: Cross-Encoder поверх топ-K кандидатов.
-- [ ] Streaming-ответ: Server-Sent Events (SSE) для токенов LLM.
+- [ ] Реранкинг: Cross-Encoder (напр. bge-reranker-base) поверх топ-10 кандидатов; в промпт — топ-3.
+- [ ] Streaming-ответ (SSE) для токенов LLM; обработка обрыва соединения (`asyncio.CancelledError`).
 - [ ] API-эндпоинт `/ask`: retrieval → сборка промпта → генерация → стриминг.
 
-### Этап 11. Graph-RAG и семантическое дерево
+### Этап 12. Graph-RAG и семантическое дерево
 
 - [ ] NER + извлечение триплетов (subject–predicate–object) из документов.
 - [ ] Схема графа: узлы (сущности/документы), рёбра (отношения), provenance (источник-документ).
@@ -114,7 +127,17 @@ Neo4j/NetworkX, Docker, GitHub Actions, OpenTelemetry, Prometheus, Grafana, Raga
 - [ ] API: эндпоинты навигации по графу (соседи узла, путь, подграф).
 - [ ] Тесты графовых запросов на testcontainers (Neo4j).
 
-### Этап 12. Надёжность, масштаб, наблюдаемость
+### Этап 13. Агентный RAG на LangGraph
+
+- [ ] Граф состояний: узлы (nodes) и рёбра (edges) — детерминированный конечный автомат вместо цепочек.
+- [ ] Типизированное состояние `AgentState` через Pydantic v2.
+- [ ] Тулы со строгой валидацией аргументов.
+- [ ] Узел валидации: ловит `ValidationError` и возвращает ошибку модели как сообщение.
+- [ ] Цикл самокоррекции: ребро на повторную генерацию, максимум 3 попытки.
+- [ ] Checkpointer (`PostgresSaver`): сохранение состояния агента.
+- [ ] Human-in-the-Loop: `interrupt_before` перед критическим действием + подтверждение по API.
+
+### Этап 14. Надёжность, масштаб, наблюдаемость
 
 - [ ] RBAC в векторном поиске: pre-filtering прав доступа на уровне SQL/индекса (нельзя найти чужое).
 - [ ] Consistency разнородных хранилищ: distributed cleanup (Postgres ↔ MinIO ↔ pgvector ↔ graph).
@@ -123,9 +146,10 @@ Neo4j/NetworkX, Docker, GitHub Actions, OpenTelemetry, Prometheus, Grafana, Raga
 - [ ] Стоимость/задержки LLM: динамический размер контекста, локальные модели для NER/эмбеддингов.
 - [ ] Rate limiting, backpressure, ограничение RPS на дорогие эндпоинты.
 - [ ] OpenTelemetry: сквозной трейсинг (endpoint → БД → LLM), спаны на ключевых операциях.
+- [ ] Трейсинг LLM-шагов (Langfuse / Phoenix): latency, расход токенов, переходы между нодами.
 - [ ] Метрики Prometheus + дашборды Grafana: TTFT, RPS, p95/p99, расход токенов, cache hit-rate.
-- [ ] RAG Evaluation: Ragas/TruLens (Faithfulness, Answer Relevance, Context Recall/Precision);
-      регрессионный прогон при изменении промптов/чанкинга.
+- [ ] RAG Evaluation: Ragas/TruLens или DeepEval (Faithfulness — нет галлюцинаций, Answer Relevance — ответ по сути);
+      прогон на 20 эталонных вопросах; регрессия при изменении промптов/чанкинга.
 - [ ] Нагрузочное тестирование (locust/k6): профилирование узких мест, бюджет задержек.
 - [ ] Миграции без даунтайма (expand/contract), zero-downtime деплой.
 - [ ] Production-образы: distroless/alpine, non-root, healthchecks (liveness/readiness).
@@ -138,20 +162,25 @@ Neo4j/NetworkX, Docker, GitHub Actions, OpenTelemetry, Prometheus, Grafana, Raga
 
 | Этап | Статус |
 |---|---|
-| 0. Каркас и инструменты | `[ ]` |
-| 1. Домен на чистом Python | `[ ]` |
-| 2. Асинхронность на чистом Python | `[ ]` |
-| 3. Локальный стек в Docker + конфигурация | `[ ]` |
-| 4. Персистентность (PostgreSQL + SQLAlchemy + Alembic) | `[ ]` |
-| 5. HTTP-слой (FastAPI) | `[ ]` |
-| 6. Аутентификация и авторизация | `[ ]` |
-| 7. Файлы (MinIO/S3) | `[ ]` |
-| 8. CI | `[ ]` |
-| 9. Асинхронный пайплайн | `[ ]` |
-| 10. Гибридный поиск и RAG | `[ ]` |
-| 11. Graph-RAG и семантическое дерево | `[ ]` |
-| 12. Надёжность, масштаб, наблюдаемость | `[ ]` |
+| 0. Каркас и инструменты | `[x]` |
+| 1. ООП и проектирование домена | `[~]` |
+| 2. Тестирование (pytest) | `[ ]` |
+| 3. Асинхронность на чистом Python | `[ ]` |
+| 4. Локальный стек в Docker + конфигурация | `[ ]` |
+| 5. Персистентность (PostgreSQL + SQLAlchemy + Alembic) | `[ ]` |
+| 6. HTTP-слой (FastAPI) | `[ ]` |
+| 7. Аутентификация и авторизация | `[ ]` |
+| 8. Файлы (MinIO/S3) | `[ ]` |
+| 9. CI | `[ ]` |
+| 10. Асинхронный пайплайн | `[ ]` |
+| 11. Гибридный поиск и RAG | `[ ]` |
+| 12. Graph-RAG и семантическое дерево | `[ ]` |
+| 13. Агентный RAG на LangGraph | `[ ]` |
+| 14. Надёжность, масштаб, наблюдаемость | `[ ]` |
 
 ## Что сделано
 
 - Репозиторий инициализирован: `pyproject.toml`, `main.py`, `.gitignore`, `.python-version`.
+- Инструменты качества настроены: uv (группа dev), Ruff, mypy `--strict`, pre-commit.
+- Каркас слоёв создан: `vectree/{domain, application, infrastructure, presentation}`.
+- Домен (в работе): сущности `Workspace`/`Folder`/`Document`/`Tag`, инварианты имён, реестр тегов.
