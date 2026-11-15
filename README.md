@@ -22,19 +22,19 @@ Neo4j/NetworkX, Docker, GitHub Actions, OpenTelemetry, Prometheus, Grafana, Raga
 
 ### Этап 1. ООП и проектирование домена (SOLID, DRY, KISS)
 
-- [ ] Классы и объекты: атрибуты, методы, `self`, конструктор `__init__`.
-- [ ] Инкапсуляция: скрытое внутреннее состояние и публичный API класса.
-- [ ] Композиция vs наследование: что и когда выбирать.
-- [ ] Value object vs сущность: идентичность и равенство (`__eq__`, `__hash__`, `@dataclass`).
-- [ ] Абстракции и полиморфизм: `abc` / `Protocol`, duck typing.
-- [ ] SOLID: SRP, OCP, LSP, ISP, DIP — на примерах домена.
-- [ ] DRY и KISS: как не дублировать и не усложнять.
-- [ ] Сущности домена: Workspace, Folder, Document, Tag, внешние ссылки.
-- [ ] Агрегаты и инварианты домена.
-- [ ] Порты (Protocol/ABC): интерфейсы репозиториев без инфраструктуры.
-- [ ] Иерархия папок: Materialized Path как чистая логика (без SQL).
-- [ ] Доменные сервисы: перемещение поддерева, теги, права.
-- [ ] In-memory репозитории (dict).
+- [x] Классы и объекты: атрибуты, методы, `self`, конструктор `__init__`.
+- [x] Инкапсуляция: скрытое внутреннее состояние и публичный API класса.
+- [x] Композиция vs наследование: что и когда выбирать.
+- [x] Value object vs сущность: идентичность и равенство (`__eq__`, `__hash__`, `@dataclass`).
+- [x] Абстракции и полиморфизм: `abc` / `Protocol`, duck typing.
+- [x] SOLID: SRP, OCP, LSP, ISP, DIP — на примерах домена.
+- [x] DRY и KISS: как не дублировать и не усложнять.
+- [x] Сущности домена: Workspace, Folder, Document, Tag.
+- [x] Инварианты домена: уникальность имён, лимит вложенности, уникальность тегов.
+- [x] Порты (Protocol/ABC): интерфейсы репозиториев без инфраструктуры.
+- [x] Иерархия папок: вложенность, лимит глубины, рекурсивный подсчёт (adjacency list).
+- [x] Доменные сервисы: `move_document`.
+- [x] In-memory репозитории (dict).
 
 ### Этап 2. Тестирование (pytest)
 
@@ -66,6 +66,7 @@ Neo4j/NetworkX, Docker, GitHub Actions, OpenTelemetry, Prometheus, Grafana, Raga
 - [ ] Alembic: инициализация, обратимые миграции.
 - [ ] Репозитории поверх Unit of Work; без lazy-load вне сессии, без N+1.
 - [ ] Иерархия папок в БД: `ltree`/Materialized Path, рекурсивные CTE (дерево, поддерево, перемещение).
+- [ ] Границы агрегатов и маппинг домена на таблицы.
 - [ ] Индексы под реальные запросы; пул соединений и таймауты.
 - [ ] Интеграционные тесты на testcontainers (Postgres).
 
@@ -90,6 +91,7 @@ Neo4j/NetworkX, Docker, GitHub Actions, OpenTelemetry, Prometheus, Grafana, Raga
 - [ ] MinIO, presigned URL на загрузку/скачивание минуя backend.
 - [ ] Валидация файлов: MIME-типы, ограничение размера, безопасные метаданные.
 - [ ] Checksum (SHA-256).
+- [ ] Внешние ссылки (URL) на документы.
 
 ### Этап 9. CI
 
@@ -163,7 +165,7 @@ Neo4j/NetworkX, Docker, GitHub Actions, OpenTelemetry, Prometheus, Grafana, Raga
 | Этап | Статус |
 |---|---|
 | 0. Каркас и инструменты | `[x]` |
-| 1. ООП и проектирование домена | `[~]` |
+| 1. ООП и проектирование домена | `[x]` |
 | 2. Тестирование (pytest) | `[ ]` |
 | 3. Асинхронность на чистом Python | `[ ]` |
 | 4. Локальный стек в Docker + конфигурация | `[ ]` |
@@ -183,4 +185,4 @@ Neo4j/NetworkX, Docker, GitHub Actions, OpenTelemetry, Prometheus, Grafana, Raga
 - Репозиторий инициализирован: `pyproject.toml`, `main.py`, `.gitignore`, `.python-version`.
 - Инструменты качества настроены: uv (группа dev), Ruff, mypy `--strict`, pre-commit.
 - Каркас слоёв создан: `vectree/{domain, application, infrastructure, presentation}`.
-- Домен (в работе): сущности `Workspace`/`Folder`/`Document`/`Tag`, инварианты имён, реестр тегов.
+- Домен: сущности `Workspace`/`Folder`/`Document`/`Tag`, инкапсуляция, value objects, порты, `move_document`, вложенные папки (лимит 5), рекурсивный подсчёт.

@@ -13,19 +13,19 @@
 - [x] Структура каталогов (Clean Architecture)
 - [x] Инструменты качества (Ruff, mypy --strict, pre-commit)
 
-## Этап 1. ООП и проектирование домена (SOLID, DRY, KISS) — в работе
+## Этап 1. ООП и проектирование домена (SOLID, DRY, KISS) — закрыт
 - [x] Классы и объекты (атрибуты, методы, self, __init__)
 - [x] Инкапсуляция
 - [x] Композиция vs наследование
 - [x] Value object vs сущность (__eq__, __hash__, dataclass)
 - [x] Абстракции и полиморфизм (abc/Protocol)
-- [ ] SOLID (SRP, OCP, LSP, ISP, DIP)
-- [ ] DRY и KISS
+- [x] SOLID (SRP, OCP, LSP, ISP, DIP)
+- [x] DRY и KISS
 - [x] Сущности домена (Workspace/Folder/Document/Tag)
-- [~] Агрегаты и инварианты
+- [x] Инварианты домена (агрегаты → этап 5)
 - [x] Порты (Protocol/ABC)
-- [~] Иерархия папок (Materialized Path, чистая логика)
-- [x] Доменные сервисы
+- [x] Иерархия папок (adjacency list, лимит, рекурсия; Materialized Path → этап 5)
+- [x] Доменные сервисы (move_document; move-поддерева → этап 5, права → этап 7)
 - [x] In-memory репозитории
 
 ## Этап 2. Тестирование (pytest)
@@ -54,6 +54,7 @@
 - [ ] Alembic (обратимые миграции)
 - [ ] Репозитории поверх UoW
 - [ ] Иерархия папок (ltree/Materialized Path, CTE)
+- [ ] Границы агрегатов и маппинг домена
 - [ ] Индексы, пул соединений
 - [ ] Интеграционные тесты (testcontainers Postgres)
 
@@ -75,6 +76,7 @@
 - [ ] MinIO + presigned URL
 - [ ] Валидация файлов
 - [ ] Checksum (SHA-256)
+- [ ] Внешние ссылки (URL)
 
 ## Этап 9. CI
 - [ ] GitHub Actions (lint + types + tests)
