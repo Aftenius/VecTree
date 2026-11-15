@@ -1,6 +1,5 @@
-from vectree.domain.entities import Document, Folder
+from vectree.domain.entities import Document, Folder, Workspace
 from vectree.domain.ports import TagRepository
-from vectree.domain.services import move_document
 
 
 def attach_tag(document: Document, repo: TagRepository, name: str) -> None:
@@ -8,19 +7,28 @@ def attach_tag(document: Document, repo: TagRepository, name: str) -> None:
 
 
 def main() -> None:
-    f1 = Folder(1, "pupupu")
-    f2 = Folder(2, "tututu")
-    f3 = Folder(3, "lalala")
-    d1 = Document(1, "1.md")
-    d2 = Document(2, "2.md")
-    d3 = Document(3, "3.md")
+    ws = Workspace(1, "HOME")
+    f1 = Folder(1, "New Direct")
+    f2 = Folder(1, "New Direct_sub")
+    f3 = Folder(1, "1234")
+    f4 = Folder(1, "qwert")
+    f5 = Folder(1, "q023da")
+    f6 = Folder(1, "1010soso401!")
+    f7 = Folder(1, "PSDFJPP")
+    ws.add_folder(f1)
+    f1.add_subfolder(f2)
+    f2.add_subfolder(f3)
+    f3.add_subfolder(f4)
+    f3.add_subfolder(f5)
+    f5.add_subfolder(f6)
 
-    f1.add_document(d1)
-    f2.add_document(d2)
-    f3.add_document(d3)
+    try:
+        f6.add_subfolder(f7)
+    except ValueError as ex:
+        print(ex)
 
-    move_document(f1, f3, d1)
-    print(len(f1.documents), len(f3.documents))
+    print(ws.name)
+    print(ws.folders[0].name)
 
 
 if __name__ == "__main__":

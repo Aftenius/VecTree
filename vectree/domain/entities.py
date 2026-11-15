@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+MAX_DEPTH = 5
+
 
 @dataclass(frozen=True)
 class Tag:
@@ -38,7 +40,25 @@ class Folder:
     def __init__(self, id: int, name: str):
         self.id = id
         self.name = name
+        self._depth: int = 1
+        self._subfolders: list[Folder] = []
         self._documents: list[Document] = []
+
+    @property
+    def depth(self) -> int:
+        return self._depth
+
+    @property
+    def subfolders(self) -> list[Folder]:
+        return list(self._subfolders)
+
+    def add_subfolder(self, folder: Folder) -> None:
+        if any(existing.name == folder.name for existing in self._subfolders):
+            raise ValueError("Такая папка уже есть!")
+        if self._depth + 1 > MAX_DEPTH:
+            raise ValueError("Достигнута максимальная вложенность папок!")
+        folder._depth = self._depth + 1
+        self._subfolders.append(folder)
 
     @property
     def documents(self) -> list[Document]:
