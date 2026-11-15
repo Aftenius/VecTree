@@ -49,6 +49,11 @@ class Folder:
             raise ValueError("Такой файл уже есть!")
         self._documents.append(document)
 
+    def remove_document(self, document: Document) -> None:
+        if document not in self._documents:
+            raise ValueError("Документ не найден!")
+        self._documents.remove(document)
+
 
 class Workspace:
     def __init__(self, id: int, name: str):
