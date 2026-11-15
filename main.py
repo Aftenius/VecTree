@@ -22,6 +22,14 @@ def main() -> None:
     f3.add_subfolder(f5)
     f5.add_subfolder(f6)
 
+    d1 = Document(1, "test")
+    d2 = Document(1, "1234")
+    f2.add_document(d1)
+    f5.add_document(d2)
+    f5.add_document(d1)
+
+    print(ws.count_documents())
+
     try:
         f6.add_subfolder(f7)
     except ValueError as ex:

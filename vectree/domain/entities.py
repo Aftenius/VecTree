@@ -74,6 +74,9 @@ class Folder:
             raise ValueError("Документ не найден!")
         self._documents.remove(document)
 
+    def count_documents(self) -> int:
+        return len(self._documents) + sum(folder.count_documents() for folder in self._subfolders)
+
 
 class Workspace:
     def __init__(self, id: int, name: str):
@@ -96,4 +99,4 @@ class Workspace:
         self._folders.append(folder)
 
     def count_documents(self) -> int:
-        return sum(len(folder.documents) for folder in self._folders)
+        return sum(folder.count_documents() for folder in self._folders)
